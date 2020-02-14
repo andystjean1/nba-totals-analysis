@@ -7,6 +7,39 @@ import sys
 
 DATA_FILE = "nba_odds_2019-20.xlsx"
 
+TEAM_ABV_DICT = {"GoldenState":"GSW",
+                 "Boston":"BOS",
+                 "NewOrleans":"NOP",
+                 "Toronto":"TOR",
+                 "LALakers":"LAL",
+                 "LAClippers":"LAC",
+                 "Detroit":"DET",
+                 "Indiana":"IND",
+                 "Cleveland":"CLE",
+                 "Orlanda":"ORL",
+                 "Chicago":"CHI",
+                 "Charlotte":"CHA",
+                 "Philadelphia":"PHI",
+                 "Memphis":"MEM",
+                 "Miami":"MIA",
+                 "Minnesota":"MIN",
+                 "Brooklyn":"BRK",
+                 "NewYork":"NYK",
+                 "SanAntonio":"SAS",
+                 "Washington":"WAS",
+                 "Dallas":"DAL",
+                 "OklahomaCity":"OKC",
+                 "Utah":"UTA",
+                 "Sacramento":"SAC",
+                 "Phoneix":"PHO",
+                 "Denver":"DEN",
+                 "Portland":"POR",
+                 "Atlanta":"ATL",
+                 "Milwaukee":"MIL",
+                 "Houston":"HOU",
+                 "GoldenState":"GSW"
+                }
+
 # get the clean data set
 # reads in the excel file -- does some cleaning and then returns a dataframe
 def get_clean_data():
@@ -47,6 +80,10 @@ def get_clean_data():
     #clean up the date and convert it to datetime
     clean_df["date"] = clean_df.apply(lambda row: format_date(row), axis=1)
 
+    #map the team names to their abbreviations
+    clean_df["team"] = clean_df["team"].map(TEAM_ABV_DICT)
+    clean_df["opp_team"] = clean_df["opp_team"].map(TEAM_ABV_DICT)
+
     #send the frame over
     return clean_df
 
@@ -60,7 +97,7 @@ def convert_row(game, row_number):
     else:                    # if the row number is odd then the opponent is a row below them
         opp_row_num = row_number - 1
 
-    print(row_number, opp_row_num)
+    #print(row_number, opp_row_num)
     #grab all the values
     date = game.loc[row_number].Date
     location = game.loc[row_number].VH
@@ -121,7 +158,7 @@ def format_date(row):
     end_season = 2020
 
     #grab the month and the day from the number
-    print(row)
+    #print(row)
     date = row["date"]
     month = int(date/100)
     day = int(date % 100)
@@ -153,7 +190,6 @@ def convert_lines(row_0_num, row_1_num):
 
     return {"total": total,
             "spread": spread}
-
 
 # calculate the points scored in overtime
 # if there was no overtime it returns 0
